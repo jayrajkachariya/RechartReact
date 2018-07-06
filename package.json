@@ -1,0 +1,20 @@
+{
+  "name": "reactexample",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "immutability-helper": "^2.7.1",
+    "papaparse": "^4.5.0",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-json-table": "^0.1.1",
+    "react-scripts": "1.1.4",
+    "recharts": "^1.0.0-beta.10"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

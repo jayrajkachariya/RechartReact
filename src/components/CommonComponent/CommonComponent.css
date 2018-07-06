@@ -1,0 +1,71 @@
+.GridChild {
+    margin: 1vh;
+    height: 30vh;
+    overflow: auto;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.GridArea {
+    display: flex;
+    flex-direction: column !important;
+}
+
+span {
+    color: #7d0000;
+}
+
+.Dselected {
+    border: 0;
+    border-radius: 5px;
+    font-size: 1em;
+    padding: 0.5em;
+    background: #5c300d;
+    color: white;
+    font-weight: bold;
+    margin: 0.5em;
+    outline: none;
+    cursor: pointer;
+}
+
+.selected {
+    border: 0;
+    border-radius: 5px;
+    font-size: 1em;
+    padding: 0.5em;
+    background: #005c00;
+    color: white;
+    font-weight: bold;
+    margin: 0.5em;
+    outline: none;
+    cursor: pointer;
+}
+
+.notSelected {
+    border: 0;
+    border-radius: 5px;
+    font-size: 1em;
+    padding: 0.5em;
+    background: #959595;
+    color: white;
+    font-weight: bold;
+    margin: 0.5em;
+    outline: none;
+    cursor: pointer;
+}
+
+.simple {
+    border: 0;
+    border-radius: 5px;
+    font-size: 1em;
+    padding: 0.5em;
+    background: #111135;
+    color: white;
+    font-weight: bold;
+    margin: 0.5em;
+    outline: none;
+    cursor: pointer;
+}

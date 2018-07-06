@@ -1,0 +1,22 @@
+table, th, td {
+    border: 1px solid #5a5a5a;
+    border-collapse: collapse;
+    color: #5a5a5a;
+}
+
+th {
+    font-weight: bold;
+    color: rebeccapurple;
+    cursor: pointer;
+}
+
+td, th {
+    padding: 7px;
+}
+
+table {
+    width: 95%;
+    height: 40vh;
+    overflow: auto;
+    margin: auto;
+}
