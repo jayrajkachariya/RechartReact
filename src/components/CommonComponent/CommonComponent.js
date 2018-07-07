@@ -62,24 +62,30 @@ class SelectHeaders extends Component {
     render() {
         return (
             <div className="grid">
-                <div>
-                    <h6>Select column for X-Axis <span>(You can select Only One)</span></h6>
+                {(this.props.keyX.length) ?
                     <div>
-                        {this.props.keys.map((KEY, i) =>
-                            <button key={i}
-                                    onClick={ () => this.props.updateXHeaders(KEY)}
-                                    className={this.numberXClassName(KEY)}>{KEY}</button>)}
-                    </div>
-                </div>
-                <div>
-                    <h6>Select column for Y-Axis <span>(You can select Multiple)</span></h6>
+                        <h6>Select column for X-Axis <span>(You can select Only One)</span></h6>
+                        <div>
+                            {this.props.keyX.map((KEY, i) =>
+                                <button key={i}
+                                        onClick={ () => this.props.updateXHeaders(KEY)}
+                                        className={this.numberXClassName(KEY)}>{KEY}</button>)}
+                        </div>
+                    </div> :
+                    <div></div>
+                }
+                {(this.props.X === '') ?
+                    <div></div> :
                     <div>
-                        {this.props.keys.map((KEY, i) =>
-                            <button key={i}
-                                    onClick={ () => this.props.updateHeaders(KEY)}
-                                    className={this.numberClassName(KEY)}>{KEY}</button>)}
+                        <h6>Select column for Y-Axis <span>(You can select Multiple)</span></h6>
+                        <div>
+                            {this.props.keyY.map((KEY, i) =>
+                                <button key={i}
+                                        onClick={() => this.props.updateHeaders(KEY)}
+                                        className={this.numberClassName(KEY)}>{KEY}</button>)}
+                        </div>
                     </div>
-                </div>
+                }
             </div>
         )
     }
@@ -89,9 +95,11 @@ class SelectHeaders extends Component {
 class CommonComponent extends Component {
 
     state = {
-        allowedFields: [],
+        availableFields: [],
+        allowedFieldsX: [],
+        allowedFieldsY: [],
         data: [],
-        Fields: [],
+        Y_Fields: [],
         X_Field: ''
     };
 
@@ -110,11 +118,20 @@ class CommonComponent extends Component {
                 keys.map(m => newObj[m] = (!isNaN(item[m])) ? (parseInt(item[m])) : (item[m]));
                 return newObj;
             });
+        this.setState({  // Nullify when new data arrives
+            availableFields: [],
+            allowedFieldsX: [],
+            allowedFieldsY: [],
+            Y_Fields: [],
+            X_Field: ''
+        });
         let temp = Object.keys(data[0]);
         temp.forEach(key => {
             if (!isNaN(data[0][key])) {
                 this.setState(prevState => ({
-                    allowedFields: [...prevState.allowedFields, key]  // Shows allowed Number typo fields available
+                    availableFields: [...prevState.availableFields, key], // Save allowed Number typo fields available for all
+                    allowedFieldsX: [...prevState.allowedFieldsX, key],  // Shows allowed Number typo fields available on X
+                    allowedFieldsY: [...prevState.allowedFieldsY, key]  // Shows allowed Number typo fields available on Y
                 }));
             }
         });
@@ -124,30 +141,41 @@ class CommonComponent extends Component {
 
     // Update for Y axis
     updateHeaders = (key) => {
-        let index = this.state.Fields.indexOf(key);
+        let index = this.state.Y_Fields.indexOf(key);
         if ( index >= 0) {
             this.setState(prevState => ({
-                Fields: update(prevState.Fields, {$splice: [[index, 1]]})
+                Y_Fields: update(prevState.Y_Fields, {$splice: [[index, 1]]})
             }))
         } else {
             this.setState(prevState => ({
-                Fields: [...prevState.Fields, key]
+                Y_Fields: [...prevState.Y_Fields, key]
             }));
         }
     };
 
     // Update for X axis
     updateXHeaders = (key) => {
-        let index = this.state.Fields.indexOf(key);
-        if ( index >= 0) {
-            this.setState(prevState => ({
-                Fields: update(prevState.Fields, {$splice: [[index, 1]]}),
-                X_Field: update(prevState.X_Field, {$set: key})
-            }))
-        } else {
-            this.setState(prevState => ({
-                X_Field: update(prevState.X_Field, {$set: key})
-            }));
+        if (this.state.allowedFieldsY.indexOf(key) >=0 ) {
+            this.setState({
+                allowedFieldsY:
+                (this.state.X_Field === '') ?
+                    update (this.state.allowedFieldsY, {
+                        $splice: [[this.state.allowedFieldsY.indexOf(key.toString()), 1]]
+                    }) :
+                    update (
+                        update (this.state.allowedFieldsY, {
+                            $splice: [[this.state.allowedFieldsY.indexOf(key.toString()), 1]]
+                        }), {$push: [this.state.X_Field.toString()]}
+                        )
+                ,
+                X_Field: key
+            });
+        }
+        if ( this.state.Y_Fields.indexOf(key.toString()) >= 0) {
+            this.setState({
+                Y_Fields: update(this.state.Y_Fields, { $splice: [[this.state.Y_Fields.indexOf(key.toString()), 1]]}),
+                X_Field: key
+            });
         }
     };
 
@@ -160,10 +188,16 @@ class CommonComponent extends Component {
                         <TableComponent data={this.state.data}/>
                     </div>
                     <div>
-                        <SelectHeaders data={this.state.data} X={this.state.X_Field}  Y={this.state.Fields} updateHeaders={this.updateHeaders} updateXHeaders={this.updateXHeaders} keys={this.state.allowedFields}/>
+                        <SelectHeaders data={this.state.data}
+                                       X={this.state.X_Field}
+                                       Y={this.state.Y_Fields}
+                                       keyX={this.state.allowedFieldsX}
+                                       keyY={this.state.allowedFieldsY}
+                                       updateHeaders={this.updateHeaders}
+                                       updateXHeaders={this.updateXHeaders}/>
                     </div>
                     <div className="GridChild" style={{height: 'auto'}}>
-                        <ChartDrow data={this.state.data} Fields={this.state.Fields} X_Field={this.state.X_Field}/>
+                        <ChartDrow data={this.state.data} Fields={this.state.Y_Fields} X_Field={this.state.X_Field}/>
                     </div>
                 </div>
             </div>
